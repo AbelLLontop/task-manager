@@ -13,7 +13,32 @@ const deleteFile = (path)=>{
         console.log(e.message);
     }
 }
-
+const Responses ={
+    UserNotFound:res=>res.status(404).json(
+        {
+            status:"error",
+            error_type:"not_found",
+            message:"User not found",
+            code:404
+    }),
+    InvalidCredentials:res=>res.status(404).json({
+        status:"error",
+        error_type:"invalid_credentials",
+        message:"Invalid credentials",
+        code:404
+    }),
+    UserAlreadyExists:res=>res.status(400).json({
+        status:"error",
+        error_type:"email_exists",
+        message:"User already exists",
+        code:404
+    }),
+    Success:(res,data)=>res.status(200).json({
+        status:"success",
+        data:data,
+        code:200
+    })
+}
 const updateUser = async (req,res,next)=>{
     try{ 
         const {id} = req.userToken;
@@ -25,7 +50,7 @@ const updateUser = async (req,res,next)=>{
             if(file){
                 deleteFile(file.path);
             }
-            return res.status(404).json({message:"User not found"});
+            return Responses.UserNotFound(res);
         }
         if(email && email !== userExist.email){
             const userExistWithEmail = await UserModel.findOne({email});
@@ -33,7 +58,7 @@ const updateUser = async (req,res,next)=>{
                 if(file){
                     deleteFile(file.path);
                 }
-                return res.status(400).json({message:"User already exists"});
+                return Responses.UserAlreadyExists(res);
             }
         }
         let fileData = null
@@ -51,7 +76,7 @@ const updateUser = async (req,res,next)=>{
         if(password){
             const isMatch = await bcrypt.compare(password,user.password);
             if(!isMatch){
-                return res.status(404).json({message:"Invalid credentials"});
+                return Responses.InvalidCredentials(res);
             }
             const salt = await bcrypt.genSalt(10)
             const hash = await bcrypt.hash(newPassword,salt);
@@ -62,7 +87,7 @@ const updateUser = async (req,res,next)=>{
         userExist.photo = fileData || userExist.photo;
         const data = await UserModel.findOneAndUpdate({_id:id},userExist,{new:true});
         data.set("password",undefined,{strict:false});
-        res.send({data});
+        return Responses.Success(res,data);
     }catch(e){
         next(e)
     }
@@ -75,7 +100,7 @@ const registerUser = async (req,res,next)=>{
         
         const userExist = await UserModel.findOne({email});
         if(userExist){
-            return res.status(400).json({message:"User already exists"});
+            return Responses.UserAlreadyExists(res);
         }
         const salt = await bcrypt.genSalt(10);
         const hash = await bcrypt.hash(password,salt);
@@ -90,12 +115,14 @@ const registerUser = async (req,res,next)=>{
             token,
             user
         }
-        res.status(200).json({data});
+        return Responses.Success(res,data);
     }catch(e){
         console.log(e);
         next(e)
     }
 }
+
+
 
 const loginUser = async (req,res,next)=>{
     try{
@@ -106,11 +133,11 @@ const loginUser = async (req,res,next)=>{
             role:0
         });
         if(!user){
-            return res.status(404).json({message:"User not found"});
+            return Responses.UserNotFound(res);
         }
         const isMatch = await bcrypt.compare(password,user.password);
         if(!isMatch){
-            return res.status(404).json({message:"Invalid credentials"});
+            return Responses.InvalidCredentials(res);
         }
         user.set("password",undefined,{strict:false});
         const token = jwt.sign({id:user._id},JWT_SECRET,{expiresIn:"1d"});
@@ -118,7 +145,7 @@ const loginUser = async (req,res,next)=>{
             token,
             user
         }
-        res.status(200).json({data});
+        return Responses.Success(res,data);
     }catch(e){
         next(e)
     }
