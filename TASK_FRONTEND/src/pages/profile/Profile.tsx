@@ -38,6 +38,22 @@ export default function ProfilePage() {
             <h1 className="font-bold text-2xl">Profile</h1>
             <p className="">Datos del usuario</p>
           </header>
+          <div>
+            <div className="cursor-pointer w-28 h-28 rounded-full bg-gray-200 mx-auto
+            hover:bg-gray-300/50
+            hover:after:opacity-100
+            after:opacity-0
+            after:content-['Edit']
+            after:w-full
+            after:h-full
+            after:flex
+            after:justify-center
+            after:items-center
+            ">
+           </div>
+            
+
+          </div>
           <label htmlFor="email">
             <span className="block text-gray-700 text-sm mb-1">Email</span>
             <input disabled autoFocus required className="

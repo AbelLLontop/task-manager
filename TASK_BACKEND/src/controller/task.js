@@ -8,9 +8,8 @@ const getAllTasks = async (req,res,next)=>{
     }catch(e){
         next(e)
     }
-
-    
 }
+
 const getTasksByIdUser = async (req,res,next)=>{
     try{
         const {id} = req.userToken;
