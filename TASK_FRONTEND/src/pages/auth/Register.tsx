@@ -9,7 +9,6 @@ function RegisterPage() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("enviando")
     setLoading(true);
     const credentials ={
       email: e.currentTarget.email.value,

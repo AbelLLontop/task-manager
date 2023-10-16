@@ -3,6 +3,9 @@ import LoginPage from "./pages/auth/Login";
 import RegisterPage from "./pages/auth/Register";
 import ProfilePage from "./pages/profile/Profile";
 import { Suspense, lazy } from "react";
+import MyListTask from "./pages/tasks/MyListTask";
+import NewTaskPage from "./pages/tasks/newTask";
+import UserProvider from "./context/UserContext";
 
 const ListTaskPage = lazy(()=>import("./pages/tasks/ListTask"))
 const PrivateLayout = lazy(()=>import("./pages/layout/PrivateLayout"))
@@ -11,7 +14,11 @@ const AuthGuard = () => {
   console.log("ENTRO A AUTH GUARD");
   const auth = localStorage.getItem("auth");
   if (auth) {
-    return <Outlet />;
+    return <UserProvider>
+      <Outlet />
+    </UserProvider>
+    
+    ;
   } else {
     return <Navigate to="/login" />;
   }
@@ -42,6 +49,15 @@ const TaskRoutes: RouteObject = {
       path: "list",
       element: <Suspense fallback={<div>CARGANDOO ELEMENTO....</div>}><ListTaskPage /></Suspense>,
     },
+    {
+      path:"my-list",
+      element:<MyListTask/>
+    }
+    ,
+    {
+      path:"create",
+      element:<NewTaskPage/>
+    }
   ],
 };
 

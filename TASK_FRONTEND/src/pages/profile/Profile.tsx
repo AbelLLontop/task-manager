@@ -1,19 +1,39 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useUserContext } from "../../context/UserContext";
+
+const initialAuth = {
+  token:"",
+  user:{
+    _id:"",
+    name:"",
+    email:"",
+  }
+}
 
 export default function ProfilePage() {
+  const {changeImage,image} = useUserContext();
   const navigate = useNavigate();
-  const [auth,setAuth] = useState({
-    token:"",
-    user:{
-      _id:"",
-      name:"",
-      email:"",
-    }
-  })
+  const [auth,setAuth] = useState(initialAuth)
+  const refFile = useRef<HTMLInputElement>(null);
+
+  const handleFile = async (e:React.ChangeEvent<HTMLInputElement>)=>{
+    const file = e.target.files?.[0];
+    if(!file) return;
+    changeImage("",file);
+    // const formData = new FormData();
+    // formData.append("file",file);
+    // const res = await fetch("http://localhost:3001/upload",{
+    //   method:"POST",
+    //   body:formData
+    // })
+    // const data = await res.json();
+    // console.log(data);
+
+
+  }
 
   useEffect(()=>{
-    console.log("hello")
     const authString = localStorage.getItem("auth");
     const authLocal = authString && JSON.parse(authString);
     if(!authLocal){
@@ -39,8 +59,20 @@ export default function ProfilePage() {
             <p className="">Datos del usuario</p>
           </header>
           <div>
-            <div className="cursor-pointer w-28 h-28 rounded-full bg-gray-200 mx-auto
-            hover:bg-gray-300/50
+            <input onChange={handleFile} ref={refFile} type="file" className="
+            absolute
+            opacity-0
+            cursor-pointer
+            h-0
+            w-0
+            
+            " />
+            <div 
+            onClick={()=>refFile.current?.click()}
+            className="cursor-pointer w-28 h-28 rounded-full  mx-auto
+            bg-gray-800
+            after:bg-gray-900/50
+            after:rounded-full
             hover:after:opacity-100
             after:opacity-0
             after:content-['Edit']
@@ -49,8 +81,26 @@ export default function ProfilePage() {
             after:flex
             after:justify-center
             after:items-center
+            after:z-10
+            after:absolute
+            after:top-0
+            after:left-0
+            relative
             ">
+              {image&&(
+                <img className="w-full h-full rounded-full object-cover absolute left-0 top-0" src={image} alt="" />
+              )}
            </div>
+           {image&&(
+           <button className=" 
+           w-full
+           mt-4
+           bg-blue-600 p-2 px-4 rounded cursor-pointer
+         hover:outline-blue-600
+         outline-none">
+              Save
+           </button>
+           )}
             
 
           </div>
