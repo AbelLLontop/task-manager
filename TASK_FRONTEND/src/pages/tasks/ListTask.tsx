@@ -40,14 +40,38 @@ const tasks = [
     date: new Date(),
     nameUser: "Juanito",
   },
+  {
+    id: 6,
+    title: "Titulo de prueba",
+    state: "Por Empezar",
+    content: "lorem",
+    date: new Date(),
+    nameUser: "Juanito",
+  },
+  {
+    id: 7,
+    title: "Titulo de prueba",
+    state: "Por Empezar",
+    content: "lorem",
+    date: new Date(),
+    nameUser: "Juanito",
+  },
+  {
+    id: 8,
+    title: "Titulo de prueba",
+    state: "Por Empezar",
+    content: "lorem",
+    date: new Date(),
+    nameUser: "Juanito",
+  },
 ];
 export default function ListTaskPage() {
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full ">
         {tasks.map((task) => (
           <TaskCard key={task.id} task={task} />
-        ))}
+          ))}
       </div>
     </>
   );

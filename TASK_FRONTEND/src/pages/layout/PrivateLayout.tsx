@@ -6,8 +6,10 @@ export default function PrivateLayout() {
   return (
     <>
       <div className="w-full p-1 min-h-screen bg-gray-950">
-        <div className=" max-w-6xl mx-auto  text-white p-8  rounded-lg h-full flex flex-col ">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 p-4 gap-2 bg-gray-900 rounded-md sticky top-9 z-10">
+        <div className="sticky max-w-6xl mx-auto top-9 z-10 px-8">
+
+   
+          <div className="  text-white grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 p-4 gap-2 bg-gray-900 rounded-md ">
             <div className="flex flex-wrap gap-2 items-center">
               <Link to={"user/profile"}>
                 <div className="bg-gray-800 p-2 px-4 rounded  cursor-pointer  hover:outline-gray-800 outline-none">
@@ -52,6 +54,9 @@ export default function PrivateLayout() {
             </div>
             </div>
           </div>
+          </div>
+        <div className=" max-w-6xl mx-auto  text-white p-8  rounded-lg h-full flex flex-col overflow-x-hidden">
+   
 
           <main className="pt-4">
             <Outlet />

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react"
+import { useIntersectionObserver } from "../../hooks/useItersectionObserver";
 
 
 export default function MyListTask() {
@@ -45,26 +46,9 @@ export default function MyListTask() {
     
     
     const Item = ({task,setState}:any)=>{
-        const containerRef = useRef(null);
-        const [isVisible,setIsVisible] = useState(false);
-        const callbackFunction = (entries)=>{
-            const [entry] = entries;
-            setIsVisible(entry.isIntersecting)
-        }
-        const options = {
-            root:null,
-            rootMargin:"-10px",
-            threshold:1
-        }
-        useEffect(()=>{
-            const observer = new IntersectionObserver(callbackFunction,options);
-            if(containerRef.current) observer.observe(containerRef.current);
-    
-            return ()=>{
-                if(containerRef.current) observer.unobserve(containerRef.current);
-            }
-    
-        },[containerRef,options])
+
+        const containerRef = useRef<HTMLDivElement>(null);
+        const  [isVisible] = useIntersectionObserver(containerRef);
     
     
       const handleSelect = (e:any)=>{
@@ -95,6 +79,7 @@ export default function MyListTask() {
           relative
          
           ${isVisible?"opacity-100":"opacity-10"}
+          ${isVisible?"left-0":"left-10"}
           transition-all
           `}>
            

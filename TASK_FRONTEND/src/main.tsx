@@ -7,7 +7,7 @@ import router from "./route";
 const routerProvider = createBrowserRouter(router);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <RouterProvider router={routerProvider} />
-  </React.StrictMode>
+  // </React.StrictMode>
 );
