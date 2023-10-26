@@ -1,5 +1,8 @@
+import { useEffect, useState } from "react";
+import Loader from "../../components/Loader";
 import TaskCard from "../../components/TaskCard";
-const tasks = [
+import { Task } from "../../interfaces/task";
+const tasksTest:Task[] = [
   {
     id: 1,
     title: "Titulo de prueba",
@@ -7,6 +10,8 @@ const tasks = [
     content: "lorem",
     date: new Date(),
     nameUser: "Juanito",
+    idUser:1,
+    imageUser:"http://localhost:3000/perfile.png"
   },
   {
     id: 2,
@@ -15,6 +20,8 @@ const tasks = [
     content: "lorem",
     date: new Date(),
     nameUser: "Juanito",
+    idUser:1,
+    imageUser:"http://localhost:3000/perfile.png"
   },
   {
     id: 3,
@@ -23,6 +30,8 @@ const tasks = [
     content: "lorem",
     date: new Date(),
     nameUser: "Juanito",
+    idUser:1,
+    imageUser:"http://localhost:3000/perfile.png"
   },
   {
     id: 4,
@@ -31,6 +40,8 @@ const tasks = [
     content: "lorem",
     date: new Date(),
     nameUser: "Juanito",
+    idUser:1,
+    imageUser:"http://localhost:3000/perfile.png"
   },
   {
     id: 5,
@@ -39,6 +50,8 @@ const tasks = [
     content: "lorem",
     date: new Date(),
     nameUser: "Juanito",
+    idUser:1,
+    imageUser:"http://localhost:3000/perfile.png"
   },
   {
     id: 6,
@@ -47,6 +60,8 @@ const tasks = [
     content: "lorem",
     date: new Date(),
     nameUser: "Juanito",
+    idUser:1,
+    imageUser:"http://localhost:3000/perfile.png"
   },
   {
     id: 7,
@@ -55,6 +70,8 @@ const tasks = [
     content: "lorem",
     date: new Date(),
     nameUser: "Juanito",
+    idUser:1,
+    imageUser:"http://localhost:3000/perfile.png"
   },
   {
     id: 8,
@@ -63,9 +80,45 @@ const tasks = [
     content: "lorem",
     date: new Date(),
     nameUser: "Juanito",
+    idUser:1,
+    imageUser:"http://localhost:3000/perfile.png"
   },
 ];
+
+const getTaskTest = async ():Promise<Task[]> => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(tasksTest);
+    }, 500);
+  });
+}
+
 export default function ListTaskPage() {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(()=>{
+    getTaskTest().then((resTasks)=>{
+      setTasks(resTasks)
+      setLoading(false)
+    })
+  },[])
+
+  if (loading) {
+    return <div
+    className="
+    mt-10
+      flex
+      justify-center
+      items-center
+      flex-grow
+    
+    "
+    >
+      <Loader />
+    </div>
+  }
+
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full ">

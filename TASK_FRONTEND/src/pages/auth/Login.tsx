@@ -2,8 +2,9 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/logolabelito.png"
 import { login } from "../../services/AuthService";
 import { useState } from "react";
+import PortalExample from "../../components/Modal";
 
-export default function LoginPage() {
+export default function LoginPage() {  
   const navigate = useNavigate();
   const [loading,setLoading] = useState(false);
 
@@ -20,7 +21,6 @@ export default function LoginPage() {
       if(res.status=="error"){
         alert(res.message)
         setLoading(false);
-        // console.clear();
         return;
       }
       setLoading(false);
@@ -78,6 +78,7 @@ export default function LoginPage() {
           </Link>
         </div>
         )}
+        <PortalExample/>
       </form>
     </main>
   );

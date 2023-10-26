@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useUserContext } from "../../context/UserContext";
+import { useUserContext } from "../../hooks/useUserContest";
 
 const initialAuth = {
   token:"",
@@ -12,7 +12,7 @@ const initialAuth = {
 }
 
 export default function ProfilePage() {
-  const {changeImage,image} = useUserContext();
+  const {changeImage,user} = useUserContext();
   const navigate = useNavigate();
   const [auth,setAuth] = useState(initialAuth)
   const refFile = useRef<HTMLInputElement>(null);
@@ -87,11 +87,11 @@ export default function ProfilePage() {
             after:left-0
             relative
             ">
-              {image&&(
-                <img className="w-full h-full rounded-full object-cover absolute left-0 top-0" src={image} alt="" />
+              {user.image&&(
+                <img className="w-full h-full rounded-full object-cover absolute left-0 top-0" src={user.image} alt="" />
               )}
            </div>
-           {image&&(
+           {user.image&&(
            <button className=" 
            w-full
            mt-4

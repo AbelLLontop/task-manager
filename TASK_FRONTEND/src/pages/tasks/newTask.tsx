@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import TaskCard from "../../components/TaskCard";
 import { Task } from "../../interfaces/task";
+import { useUserContext } from "../../hooks/useUserContest";
 
 const initialTask = {
   id: 1,
@@ -14,6 +15,7 @@ const initialTask = {
 const NewTaskPage = () => {
   const [task,setTask] = useState<Task>(initialTask);
   const refInput = useRef<HTMLInputElement>(null);
+  const {user} = useUserContext();
 useEffect(()=>{
   refInput.current?.select();
 
@@ -27,7 +29,7 @@ useEffect(()=>{
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <TaskCard task={task} />
+      <TaskCard user={user} task={task} />
       <div className="mt-4">
         <h1 className="text-2xl text-center">Create a new Task</h1>
         <div className="flex flex-col gap-2 max-w-sm mx-auto">

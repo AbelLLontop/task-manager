@@ -1,29 +1,31 @@
 import { RefObject, useEffect, useState } from "react";
 
-
-  export const useIntersectionObserver = (containerRef:RefObject<HTMLDivElement>) => {
-    const [isVisible, setIsVisible] = useState(false);
-    useEffect(() => {
-      const options:IntersectionObserverInit = {
-        root: null,
-        rootMargin: "0px",
-        threshold: .9,
-      };
-      const observer = new IntersectionObserver(callbackFunction, options);
-      if (containerRef.current) observer.observe(containerRef.current);
-      
-      const cleanUp = () => {
-        if (containerRef.current) observer.unobserve(containerRef.current);
-      }
-      
-      return cleanUp;
-    }, [containerRef]);
-    
-    const callbackFunction:IntersectionObserverCallback= (entries: IntersectionObserverEntry[],observer) => {
-      const [entry] = entries;
-      setIsVisible(entry.isIntersecting);
+export const useIntersectionObserver = (
+  containerRef: RefObject<HTMLDivElement>
+) => {
+  const [isVisible, setIsVisible] = useState(false);
+  useEffect(() => {
+    const options: IntersectionObserverInit = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 0.9,
     };
-    
-    return [ isVisible ]
-    }
-  
+    const observer = new IntersectionObserver(callbackFunction, options);
+    if (containerRef.current) observer.observe(containerRef.current);
+
+    const cleanUp = () => {
+      if (containerRef.current) observer.unobserve(containerRef.current);
+    };
+
+    return cleanUp;
+  }, [containerRef]);
+
+  const callbackFunction: IntersectionObserverCallback = (
+    entries: IntersectionObserverEntry[]
+  ) => {
+    const [entry] = entries;
+    setIsVisible(entry.isIntersecting);
+  };
+
+  return [isVisible];
+};

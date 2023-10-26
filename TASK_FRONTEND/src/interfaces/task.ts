@@ -5,4 +5,6 @@ export interface Task{
     date:Date;
     content:string;
     nameUser:string;
+    idUser:number;
+    imageUser:string;
 }
