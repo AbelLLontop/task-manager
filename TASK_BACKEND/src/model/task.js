@@ -6,6 +6,14 @@ const TaskSchema = new Schema({
         type:String,
         required:true
     },
+    description:{
+        type:String,
+        required:true
+    },
+    status:{
+        type:String,
+        default:false
+    },
     user:{
         type:Schema.Types.ObjectId,
         ref:"users",

@@ -1,11 +1,12 @@
 const express = require("express");
-const { loginUser, registerUser,updateUser } = require("../controller/user");
+const router = express.Router()
 const uploadImageMiddleware = require("../libs/storajeUpload");
 const authMiddleware = require("../middleware/auth");
-const router = express.Router()
+const UserController = require("../controller/UserController");
 
-router.post("/register",registerUser);
-router.put("/update",authMiddleware,uploadImageMiddleware,updateUser);
-router.post("/login",loginUser)
+const userController = new UserController();
+router.get("/me",authMiddleware,userController.getUser.bind(userController));
+router.delete("/delete",authMiddleware,userController.deleteUser.bind(userController));
+router.put("/update",authMiddleware,uploadImageMiddleware,userController.updateUser.bind(userController));
 
 module.exports = router;

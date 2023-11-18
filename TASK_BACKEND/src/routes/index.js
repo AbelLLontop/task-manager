@@ -14,4 +14,5 @@ fs.readdirSync(PATH_ROUTES).forEach((file)=>{
     }  
 })
 
+
 module.exports = router;
