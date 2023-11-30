@@ -1,14 +1,19 @@
 import { Task } from "../interfaces/task";
 import { useIntersectionObserver } from "../hooks/useItersectionObserver";
-import { useEffect, useRef, useState } from "react";
-import { User } from "../context/UserContext";
-
+import { useRef } from "react";
+import { useAuthContext } from "../context/UserContext";
+import { useTaskContext } from "../context/TaskContext";
+import { Link } from "react-router-dom";
+import utc from 'dayjs/plugin/utc'
+import dayjs from "dayjs";
+dayjs.extend(utc)
 interface Props {
   task: Task;
-  user?: User;
 }
-const TaskCard = ({ task, user }: Props) => {
+const TaskCard = ({ task }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const { user } = useAuthContext();
+  const { deleteTask } = useTaskContext();
   const [isVisible] = useIntersectionObserver(containerRef);
 
   return (
@@ -18,32 +23,50 @@ const TaskCard = ({ task, user }: Props) => {
     hover:scale-[1.02]
         ${isVisible ? "opacity-100" : "opacity-10"} transition-all`}
     >
-      <div className="flex gap-2 items-center mb-2">
+      <div className="flex justify-between">
+
+      <div className="flex gap-2 items-center mb-2 ">
         <div className="w-10 h-10 flex-grow-0 flex-shrink-0 rounded-full bg-gray-800 relative">
-          <img
-            className="w-full h-full rounded-full object-cover absolute left-0 top-0"
-            src={user ? user.image : task.imageUser}
-            alt=""
-          />
+          
         </div>
 
         <div>
           <h3 className="font-bold">{task.title}</h3>
-          <div className=" group-hover:text-gray-400">
-            By {user ? user.name : task.nameUser}
-          </div>
+          <div className=" group-hover:text-gray-400">By {task.user.username}</div>
         </div>
       </div>
+      <div className=" flex gap-2">
+        <button
+        onClick={()=>deleteTask(task._id)}
+        className="
+      place-self-center
+      w-full
+      sm:w-fit
+      sm:place-self-end
+      md:place-self-center
+      bg-red-600 p-2 px-4 rounded cursor-pointer
+    hover:outline-red-600
+    outline-none">Delete</button>
+        <Link
+        to={`/task/${task._id}`}
+        className="
+      place-self-center
+      w-full
+      sm:w-fit
+      sm:place-self-end
+      md:place-self-center
+      bg-yellow-600 p-2 px-4 rounded cursor-pointer
+    hover:outline-yellow-600
+    outline-none">Edit</Link>
+      </div>
+      </div>
       <p className="group-hover:text-gray-50 text-gray-400 text-sm">
-        {task.content}
+        {task.description}
       </p>
       <div className="flex justify-between items-center">
         <span>
-          <div className=" group-hover:text-gray-400">
-            {task.date.toLocaleDateString()}
-          </div>
+          <div className=" group-hover:text-gray-400">{dayjs(task.date).utc().format("DD/MM/YYYY")}</div>
         </span>
-        <div className="p-2 px-4">{task.state}</div>
       </div>
     </div>
   );

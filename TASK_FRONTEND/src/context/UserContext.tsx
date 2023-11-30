@@ -1,77 +1,130 @@
-import { createContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-
-export interface User {
-  image: string;
-  name:string;
-  email:string; 
-
-}
-const initialUser = {
-  image: "",
-  name:"",
-  email:"",
-}
-interface IUserContext{
+import { createContext, useContext, useEffect, useState } from "react";
+import {
+  loginRequest,
+  registerRequest,
+  veriryTokenRequest,
+} from "../services/AuthService";
+import { CredentialsLogin, CredentialsRegister } from "../interfaces/Auth";
+import Cookies from "js-cookie";
+import { User } from "../interfaces/user.interface";
+export const AuthContext = createContext<{
+  signup: (credentials: CredentialsRegister) => void;
+  signin: (credentials: CredentialsLogin) => void;
+  logout:()=>void;
   user: User;
-  changeImage: (image: string, file: File) => void;
-}
-
-export const UserContext = createContext<IUserContext>({
-  user: initialUser,
-  changeImage: () => {""},
+  isAuthenticated: boolean;
+  errors: string[];
+  loading: boolean;
+}>({
+  signup: () => {
+    ("");
+  },
+  signin: () => {
+    ("");
+  },
+  logout: () => {("")},
+  user: {
+    id: "",
+    username: "",
+    email: "",
+    createAt:"",
+    updateAt:"",
+  },
+  isAuthenticated: false,
+  errors: [],
+  loading: true,
 });
+export const useAuthContext = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuthContext must be used within an AuthProvider");
+  }
+  return context;
+};
 
-const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user,setUser] = useState<User>(initialUser)
-  const navigate = useNavigate();
+const EmptyUser: User = {
+  id: "",
+  username: "",
+  email: "",
+  createAt:"",
+  updateAt:"",
+};
 
-
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<User>(EmptyUser);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [errors, setErrors] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
-    fetch("http://localhost:3000/perfile.png")
-      .then((response) => response.blob())
-      .then((blob) => {
-        const url = URL.createObjectURL(blob);
-        setUser((prev)=>({...prev,image:url}));
-      });
-  }, []);
-  useEffect(()=>{
-    const authLocalStorage = localStorage.getItem("auth")
-    if(authLocalStorage){
-      let authObject;
-      try{
-        authObject = JSON.parse(authLocalStorage)
-      }catch(error){
-        authObject = {};
-      }
-      const userObject:User = authObject.user;
-      if(userObject){
-        setUser((prev)=>({...prev,
-        email:userObject.email,
-        name:userObject.name
-        }))
-      }else{
-        navigate("/login",{replace:true});
-      }
-    }else{
-      navigate("/login",{replace:true});
+    if (errors.length > 0) {
+      const timer = setTimeout(() => {
+        setErrors([]);
+      }, 5000);
+      return () => clearTimeout(timer);
     }
+  }, [errors]);
+  useEffect(() => {
+    const checkLogin = async () => {
+      const cookies = Cookies.get();
+      if (!cookies.token) {
+        setIsAuthenticated(false);
+        setLoading(false);
+        return setUser(EmptyUser);
+      }
+      try {
+        const res = await veriryTokenRequest();
+        if (!res.data) {
+          setLoading(false);
+          setIsAuthenticated(false);
+          return;
+        }
 
-  },[navigate])
-
-  const changeImage = (image: string, file: File) => {
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      console.log(imageUrl);
-      setUser((prev)=>({...prev,image:imageUrl}));
-    } else {
-      setUser((prev)=>({...prev,image:image}));
+        setIsAuthenticated(true);
+        setUser(res.data);
+        setLoading(false);
+      } catch (err) {
+        setIsAuthenticated(false);
+        setUser(EmptyUser);
+        setLoading(false);
+      }
+    };
+    checkLogin();
+  }, []);
+  const signup = async (credentials: CredentialsRegister) => {
+    try {
+      const res = await registerRequest(credentials as CredentialsRegister);
+      console.log(res.data);
+      setUser(res.data);
+      setIsAuthenticated(true);
+    } catch (error: unknown) {
+      const errorAxios = error as { response: { data: string[] } };
+      setErrors(errorAxios.response.data);
+      setIsAuthenticated(false);
     }
   };
+
+  const signin = async (credentials: CredentialsLogin) => {
+    try {
+      const res = await loginRequest(credentials as CredentialsLogin);
+      console.log(res.data);
+      setUser(res.data);
+      setIsAuthenticated(true);
+    } catch (error: unknown) {
+      const errorAxios = error as { response: { data: string[] } };
+      setErrors(errorAxios.response.data);
+      setIsAuthenticated(false);
+    }
+  };
+  const logout = ()=>{
+    Cookies.remove("token");
+    setUser(EmptyUser);
+    setIsAuthenticated(false);
+  }
   return (
-    <UserContext.Provider value={{ user, changeImage }}>
+    <AuthContext.Provider
+      value={{ signup, user, isAuthenticated, errors, signin, loading,logout }}
+    >
       {children}
-    </UserContext.Provider>
+    </AuthContext.Provider>
   );
 };
-export default UserProvider;

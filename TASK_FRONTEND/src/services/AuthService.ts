@@ -1,30 +1,13 @@
-const API_URL = import.meta.env.VITE_API_URL
+import {  CredentialsLogin, CredentialsRegister } from "../interfaces/Auth";
+import { User } from '../interfaces/user.interface';
+import { apiManager } from "./api.config";
 
-type Credentials = {
-    email:string
-    password:string
+
+export const loginRequest = async(credentials:CredentialsLogin)=>{
+   return await apiManager.post("/login",credentials);
 }
-type CredentialsRegister = {
-    email:string
-    password:string
-    name:string
-}
-export const login = async(credentials:Credentials)=>{
-    const response = await fetch(`${API_URL}/user/login`,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(credentials)
-    })
-    const data = await response.json()
-    return data
+export const registerRequest = async(credentials:CredentialsRegister)=>{
+    return await apiManager.post("/register",credentials);
 }
 
-export const register = async(credentials:CredentialsRegister)=>{
-    const response = await fetch(`${API_URL}/user/register`,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(credentials)
-    })
-    const data = await response.json();
-    return data;
-}
+export const veriryTokenRequest = async()=> await apiManager.get<User>("/verify");

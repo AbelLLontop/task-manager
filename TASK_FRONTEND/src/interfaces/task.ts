@@ -1,10 +1,9 @@
+import { User } from "./user.interface";
+
 export interface Task{
-    id: number;
+    _id: string;
     title: string;
-    state:string;
-    date:Date;
-    content:string;
-    nameUser:string;
-    idUser:number;
-    imageUser:string;
+    description:string;
+    date:string;
+    user:User
 }
